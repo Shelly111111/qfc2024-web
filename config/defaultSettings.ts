@@ -1,4 +1,4 @@
-import { ProLayoutProps } from '@ant-design/pro-components';
+import {ProLayoutProps} from '@ant-design/pro-components';
 
 /**
  * @name
@@ -13,10 +13,10 @@ const Settings: ProLayoutProps & {
   layout: 'top',
   contentWidth: 'Fluid',
   fixedHeader: false,
-  fixSiderbar: true,
+  fixSiderbar: false,
   colorWeak: false,
   title: 'QFC2024',
-  pwa: true,
+  pwa: false,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   iconfontUrl: '',
   token: {

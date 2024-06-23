@@ -77,7 +77,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       // 如果没有登录，重定向到 login
       if (!initialState?.currentUser && location.pathname !== loginPath) {
         //重定向到登录页面
-        // history.push(loginPath);
+        history.push(loginPath);
       }
     },
 
@@ -113,7 +113,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         ]
       : [],
 
-    menuHeaderRender: undefined,
+    // menuHeaderRender: undefined,
 
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,

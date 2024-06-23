@@ -39,3 +39,12 @@ screenshot
 .eslintcache
 
 build
+.github
+/README.ar-DZ.md
+/README.es-ES.md
+/README.fr-FR.md
+/README.ja-JP.md
+/README.pt-BR.md
+/README.ru-RU.md
+/README.tr-TR.md
+.husky
