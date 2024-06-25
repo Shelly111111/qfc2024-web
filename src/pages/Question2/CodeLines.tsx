@@ -1,52 +1,37 @@
 import {PageContainer} from '@ant-design/pro-components';
 import React, {useState} from 'react';
-import {CloudUploadOutlined, CodeOutlined, InboxOutlined} from '@ant-design/icons';
-import {message, Upload, Card, Modal, Descriptions, Row, Col} from 'antd';
-import {analysisFile, uploadFile} from "@/services/ant-design-pro/api";
+import {Card, Col, Descriptions, message, Modal, Row, Upload} from "antd";
+import {uploadFile} from "@/services/ant-design-pro/api";
+import {CloudUploadOutlined, CodeOutlined, InboxOutlined} from "@ant-design/icons";
 
-const {Dragger} = Upload;
+const CodeLines = () => {
 
-const LogAnalysis = () => {
-
-  const [file, setFile] = useState("请上传文件")
-  const [totalQueryCount, setTotalQueryCount] = useState("-1")
-  const [getQueryCount, setGetQueryCount] = useState("-1")
-  const [postQueryCount, setPostQueryCount] = useState("-1")
-  const [frequentInterface, setFrequentInterface] = useState("[]")
-  const [groupedURL, setGroupedURL] = useState("[]")
+  const {Dragger} = Upload;
   const [isModalOpen, setIsModalOpen] = useState(false)
-
+  const [file, setFile] = useState("请上传文件")
 
   const items = [
     {
       key: '1',
-      label: '请求总量',
-      children: totalQueryCount,
+      label: '总行数',
+      children: -1,
     },
     {
       key: '2',
-      label: 'GET请求总量',
-      children: getQueryCount,
+      label: '代码行数',
+      children: -1,
     },
     {
       key: '3',
-      label: 'POST请求总量',
-      children: postQueryCount,
+      label: '空白行数',
+      children: -1,
     },
     {
       key: '4',
-      label: '请求最频繁的10个接口',
-      children: (<Descriptions items={JSON.parse(frequentInterface)} column={2}/>),
-      span: 3,
+      label: '注释行数',
+      children: -1,
     },
-    {
-      key: '4',
-      label: 'URI分类',
-      children: (<Descriptions items={JSON.parse(groupedURL)} column={1}/>),
-      span: 3,
-    }
   ]
-
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -57,6 +42,7 @@ const LogAnalysis = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
   const onChange = (info) => {
     const {status, response} = info.file;
     if (status === 'done') {
@@ -82,36 +68,21 @@ const LogAnalysis = () => {
     }
   }
 
-  //分析日志
-  const analysis = async () => {
+  const statistics = async () => {
     if(file === "请上传文件"){
       message.error("请上传文件")
       return;
     }
-    const msg = await analysisFile(file);
-    if (+msg.code === 200) {
-      let data = msg.data
-      //设置请求总量
-      setTotalQueryCount(data.queryCount)
-      setFrequentInterface(JSON.stringify(data.frequentInterface))
-      setGetQueryCount(data.getCount)
-      setPostQueryCount(data.postCount)
-      setGroupedURL(JSON.stringify(data.groupedURL))
-    } else {
-      message.error(msg.message)
-    }
   }
-
 
   return (
     <PageContainer>
       <div>
-        <p>从本题对应的附件中找到 access.log 文件，并编程根据文件内容统计以下数据：</p>
-        <p>1. 请求总量；</p>
-        <p>2. 请求最频繁的 10 个 HTTP 接口，及其相应的请求数量；</p>
-        <p>3. POST 和 GET 请求量分别为多少；</p>
-        <p>4. URI 格式均为 /AAA/BBB 或者 /AAA/BBB/CCC 格式，按 AAA 分类，输出各个类别 下 URI 都有哪些。</p>
-        <p>本题推荐使用 Java 语言和 Guava 库。</p>
+        <p>从本题对应的附件中找到 StringUtils.java 文件，将其复制到工程的 classpath 下，编程统计附件中的 StringUtils.java 文件的有效代码行数（一个数字）到一个新文件
+          validLineCount.txt 中。请注意，</p>
+        <p>1. 有效不包括空行、注释；</p>
+        <p>2. 考虑代码里有多行注释的情况；</p>
+        <p>3. 不用考虑代码和注释混合在一行的情况。</p>
       </div>
       <div>
         <Modal title="Upload Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
@@ -144,19 +115,19 @@ const LogAnalysis = () => {
               <Col><CloudUploadOutlined/></Col>
               <Col>上传文件</Col>
             </Row>,
-            <Row key="analysis" style={{width: "100%", height: "100%"}} onClick={analysis} justify="center">
+            <Row key="analysis" style={{width: "100%", height: "100%"}} onClick={statistics} justify="center">
               <Col><CodeOutlined/></Col>
-              <Col>分析日志</Col>
+              <Col>行数统计</Col>
             </Row>,
           ]}
         >
-          <Descriptions layout={"vertical"} bordered items={items}>
+          <Descriptions layout={"vertical"} bordered items={items} column={2}>
 
           </Descriptions>
         </Card>
       </div>
     </PageContainer>
   );
-};
+}
 
-export default LogAnalysis;
+export default CodeLines;

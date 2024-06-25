@@ -28,35 +28,7 @@ export default [
     icon: 'smile',
     component: './Welcome',
     menu: false,
-    // layout: {
-    //   hideMenu: true,
-    //   hideNav: true,
-    //   hideFooter: true,
-    // },
   },
-  // {
-  //   path: '/admin',
-  //   name: 'admin',
-  //   icon: 'crown',
-  //   access: 'canAdmin',
-  //   routes: [
-  //     {
-  //       path: '/admin',
-  //       redirect: '/admin/sub-page',
-  //     },
-  //     {
-  //       path: '/admin/sub-page',
-  //       name: 'sub-page',
-  //       component: './Admin',
-  //     },
-  //   ],
-  // },
-  // {
-  //   name: 'list.table-list',
-  //   icon: 'table',
-  //   path: '/list',
-  //   component: './TableList',
-  // },
   {
     path: '/',
     redirect: '/welcome',
@@ -64,13 +36,14 @@ export default [
   {
     path: '/logAnalysis',
     name: '日志分析',
-    // layout: {
-    //   hideMenu: true,
-    //   hideNav: false,
-    //   hideFooter: false,
-    // },
     icon: 'FormOutlined',
     component: './Question1/LogAnalysis',
+  },
+  {
+    path: '/codeLines',
+    name: '代码行数统计',
+    icon: 'CodeOutlined',
+    component: './Question2/CodeLines',
   },
   {
     path: '*',
