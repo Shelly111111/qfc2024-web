@@ -1,7 +1,7 @@
 import {PageContainer} from '@ant-design/pro-components';
 import React, {useState} from 'react';
 import {Card, Col, Descriptions, message, Modal, Row, Upload} from "antd";
-import {uploadFile} from "@/services/ant-design-pro/api";
+import {statisticsCodeLine, uploadFile} from "@/services/ant-design-pro/api";
 import {CloudUploadOutlined, CodeOutlined, InboxOutlined} from "@ant-design/icons";
 
 const CodeLines = () => {
@@ -9,6 +9,7 @@ const CodeLines = () => {
   const {Dragger} = Upload;
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [file, setFile] = useState("请上传文件")
+  const [codeLines, setCodeLines] = useState("-1")
 
   const items = [
     {
@@ -19,7 +20,7 @@ const CodeLines = () => {
     {
       key: '2',
       label: '代码行数',
-      children: -1,
+      children: codeLines,
     },
     {
       key: '3',
@@ -58,8 +59,8 @@ const CodeLines = () => {
   }
 
   const beforeUpload = (file, fileList) => {
-    if (file.type !== "text/plain" && !file.name.endsWith(".log")) {
-      message.error("只能上传文本文件或log日志文件！")
+    if (!file.name.endsWith(".java")) {
+      message.error("只能上传java文件！")
       return false;
     }
     if (file.size / 1024 / 1024 > 50) {
@@ -69,9 +70,19 @@ const CodeLines = () => {
   }
 
   const statistics = async () => {
-    if(file === "请上传文件"){
+    if (file === "请上传文件") {
       message.error("请上传文件")
       return;
+    }
+
+    //将需要统计的文件名传入后端
+    const msg = await statisticsCodeLine(file)
+    if (+msg.code === 200) {
+      let data = msg.data
+      setCodeLines(data.codeLine)
+      // console.log(data)
+    } else {
+      message.error(msg.message)
     }
   }
 
@@ -89,7 +100,7 @@ const CodeLines = () => {
           <Dragger
             name="file"
             multiple={false}
-            accept="text/plain, .log"
+            accept=".java"
             customRequest={uploadFile}
             onChange={onChange}
             beforeUpload={beforeUpload}

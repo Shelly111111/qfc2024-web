@@ -65,3 +65,12 @@ export const analysisFile = async (filename) => {
     data: formData,
   });
 }
+
+export const statisticsCodeLine = async (filename) => {
+  const formData = new FormData()
+  formData.append('file', filename)
+  return request('/api/code_lines/statistics', {
+    method: 'POST',
+    data: formData,
+  });
+}
