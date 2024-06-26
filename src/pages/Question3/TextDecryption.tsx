@@ -20,6 +20,8 @@ const TextDecryption = () => {
   //总页数
   const [totalPage, setTotalPage] = useState(1);
 
+  const rows=10;
+
   const onChange = (info) => {
     const {status, response} = info.file;
     if (status === 'done') {
@@ -115,7 +117,7 @@ const TextDecryption = () => {
               <Title level={4} style={{display: "flex",justifyContent: "center"}}>加密后的文本</Title>
               <TextArea disabled
                         value={encryptText}
-                        rows={10}
+                        rows={rows}
                         style={{backgroundColor: "white", resize: 'none', color:'black'}}
               />
             </Col>
@@ -124,7 +126,7 @@ const TextDecryption = () => {
               <Title level={4} style={{display: "flex",justifyContent: "center"}}>解密后的文本</Title>
               <TextArea disabled
                         value={decryptText}
-                        rows={10}
+                        rows={rows}
                         style={{backgroundColor: "white", resize: 'none', color:'black'}}
               />
 
