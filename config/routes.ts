@@ -42,8 +42,14 @@ export default [
   {
     path: '/codeLines',
     name: '代码行数统计',
-    icon: 'CodeOutlined',
+    icon: 'BarChartOutlined',
     component: './Question2/CodeLines',
+  },
+  {
+    path: '/textDecryption',
+    name: '文本解密',
+    icon: 'FileTextOutlined',
+    component: './Question3/TextDecryption',
   },
   {
     path: '*',

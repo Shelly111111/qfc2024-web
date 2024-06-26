@@ -2,7 +2,7 @@ import {PageContainer} from '@ant-design/pro-components';
 import React, {useState} from 'react';
 import {Card, Col, Descriptions, message, Modal, Row, Upload} from "antd";
 import {statisticsCodeLine, uploadFile} from "@/services/ant-design-pro/api";
-import {CloudUploadOutlined, CodeOutlined, InboxOutlined} from "@ant-design/icons";
+import {BarChartOutlined, CloudUploadOutlined, InboxOutlined} from "@ant-design/icons";
 
 const CodeLines = () => {
 
@@ -58,7 +58,7 @@ const CodeLines = () => {
     }
   }
 
-  const beforeUpload = (file, fileList) => {
+  const beforeUpload = (file) => {
     if (!file.name.endsWith(".java")) {
       message.error("只能上传java文件！")
       return false;
@@ -96,7 +96,7 @@ const CodeLines = () => {
         <p>3. 不用考虑代码和注释混合在一行的情况。</p>
       </div>
       <div>
-        <Modal title="Upload Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title="上传文件" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
           <Dragger
             name="file"
             multiple={false}
@@ -110,8 +110,7 @@ const CodeLines = () => {
             </p>
             <p className="ant-upload-text">Click or drag file to this area to upload</p>
             <p className="ant-upload-hint">
-              Support for a single or bulk upload. Strictly prohibited from uploading company data or other
-              banned files.
+              请上传java脚本文件，文件大小不能超过50MB
             </p>
           </Dragger>
         </Modal>
@@ -127,7 +126,7 @@ const CodeLines = () => {
               <Col>上传文件</Col>
             </Row>,
             <Row key="analysis" style={{width: "100%", height: "100%"}} onClick={statistics} justify="center">
-              <Col><CodeOutlined/></Col>
+              <Col><BarChartOutlined/></Col>
               <Col>行数统计</Col>
             </Row>,
           ]}

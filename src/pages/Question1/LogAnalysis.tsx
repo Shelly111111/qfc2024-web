@@ -71,7 +71,7 @@ const LogAnalysis = () => {
     }
   }
 
-  const beforeUpload = (file, fileList) => {
+  const beforeUpload = (file) => {
     if (file.type !== "text/plain" && !file.name.endsWith(".log")) {
       message.error("只能上传文本文件或log日志文件！")
       return false;
@@ -114,7 +114,7 @@ const LogAnalysis = () => {
         <p>本题推荐使用 Java 语言和 Guava 库。</p>
       </div>
       <div>
-        <Modal title="Upload Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title="上传文件" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
           <Dragger
             name="file"
             multiple={false}
@@ -128,8 +128,7 @@ const LogAnalysis = () => {
             </p>
             <p className="ant-upload-text">Click or drag file to this area to upload</p>
             <p className="ant-upload-hint">
-              Support for a single or bulk upload. Strictly prohibited from uploading company data or other
-              banned files.
+              请上传文本文件或log日志文件，文件大小不能超过50MB
             </p>
           </Dragger>
         </Modal>
