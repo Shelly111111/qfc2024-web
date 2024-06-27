@@ -1,14 +1,14 @@
 import {PageContainer} from '@ant-design/pro-components';
 import React, {useState} from 'react';
 import {Card, Col, Divider, Input, message, Modal, Pagination, Row, Upload, Typography} from "antd";
-import {uploadFile} from "@/services/ant-design-pro/api";
+import {decryptFile, uploadFile} from "@/services/ant-design-pro/api";
 import {CloudUploadOutlined, FileTextOutlined, InboxOutlined} from "@ant-design/icons";
 
 const TextDecryption = () => {
 
   const {Dragger} = Upload;
-  const { TextArea } = Input;
-  const { Title } = Typography;
+  const {TextArea} = Input;
+  const {Title} = Typography;
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [file, setFile] = useState("请上传文件")
@@ -16,11 +16,11 @@ const TextDecryption = () => {
   const [encryptText, setEncryptText] = useState("");
   const [decryptText, setDecryptText] = useState("");
   //当前页
-  const [pageNumber, setPageNumber] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   //总页数
   const [totalPage, setTotalPage] = useState(1);
 
-  const rows=10;
+  const rows = 10;
 
   const onChange = (info) => {
     const {status, response} = info.file;
@@ -47,8 +47,10 @@ const TextDecryption = () => {
     }
   }
 
-  const pageChange = (pageNumber) => {
-    // console.log('Page: ', pageNumber);
+  const pageChange = async (pageNumber) => {
+    setCurrentPage(pageNumber)
+
+    await decrypt(pageNumber)
   };
 
   const showModal = () => {
@@ -61,8 +63,31 @@ const TextDecryption = () => {
     setIsModalOpen(false);
   };
 
-  const decrypt = async () => {
+  const decrypt = async (pageNumber) => {
+    if (file === "请上传文件") {
+      message.error("请上传文件")
+      return;
+    }
 
+    //将需要解密的文件名传入后端
+    const msg = await decryptFile(file, pageNumber, rows)
+    // console.log(msg)
+    if (+msg.code === 200) {
+      let data = msg.data
+      setCurrentPage(data.currentPage)
+      setTotalPage(data.totalSize)
+      let entext = ""
+      let detext = ""
+      for (let d of data.data) {
+        entext = entext + d.line + "\n"
+        detext = detext + d.decryptLine + "\n"
+      }
+      setEncryptText(entext)
+      setDecryptText(detext)
+
+    } else {
+      message.error(msg.message)
+    }
   }
 
   return (
@@ -81,7 +106,7 @@ const TextDecryption = () => {
           <Dragger
             name="file"
             multiple={false}
-            accept=".java"
+            accept="text/plain"
             customRequest={uploadFile}
             onChange={onChange}
             beforeUpload={beforeUpload}
@@ -106,34 +131,37 @@ const TextDecryption = () => {
               <Col><CloudUploadOutlined/></Col>
               <Col>上传文件</Col>
             </Row>,
-            <Row key="decrypt" style={{width: "100%", height: "100%"}} onClick={decrypt} justify="center">
+            <Row key="decrypt" style={{width: "100%", height: "100%"}} onClick={async () => {
+              await decrypt(currentPage)
+            }} justify="center">
               <Col><FileTextOutlined/></Col>
               <Col>文本解密</Col>
             </Row>,
           ]}
         >
-          <Row style={{display: "flex",justifyContent: "center"}}>
-            <Col span={11} >
-              <Title level={4} style={{display: "flex",justifyContent: "center"}}>加密后的文本</Title>
+          <Row style={{display: "flex", justifyContent: "center"}}>
+            <Col span={11}>
+              <Title level={4} style={{display: "flex", justifyContent: "center"}}>加密后的文本</Title>
               <TextArea disabled
                         value={encryptText}
                         rows={rows}
-                        style={{backgroundColor: "white", resize: 'none', color:'black'}}
+                        style={{backgroundColor: "white", resize: 'none', color: 'black'}}
               />
             </Col>
             <Divider type="vertical"/>
             <Col span={11}>
-              <Title level={4} style={{display: "flex",justifyContent: "center"}}>解密后的文本</Title>
+              <Title level={4} style={{display: "flex", justifyContent: "center"}}>解密后的文本</Title>
               <TextArea disabled
                         value={decryptText}
                         rows={rows}
-                        style={{backgroundColor: "white", resize: 'none', color:'black'}}
+                        style={{backgroundColor: "white", resize: 'none', color: 'black'}}
               />
 
             </Col>
           </Row>
           <br/>
-          <Pagination showQuickJumper defaultCurrent={pageNumber} total={totalPage} onChange={pageChange} style={{display: "flex",justifyContent: "center"}}/>
+          <Pagination showQuickJumper defaultCurrent={currentPage} total={totalPage} onChange={pageChange}
+                      style={{display: "flex", justifyContent: "center"}}/>
         </Card>
       </div>
     </PageContainer>

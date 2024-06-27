@@ -74,3 +74,14 @@ export const statisticsCodeLine = async (filename) => {
     data: formData,
   });
 }
+
+export const decryptFile = async (filename, pageNumber,pageSize) => {
+  const formData = new FormData()
+  formData.append('file', filename)
+  formData.append('pageNumber', pageNumber)
+  formData.append('pageSize', pageSize)
+  return request('/api/text_decrypt/decrypt', {
+    method: 'POST',
+    data: formData,
+  });
+}
