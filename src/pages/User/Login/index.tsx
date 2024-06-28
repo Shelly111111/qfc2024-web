@@ -80,15 +80,13 @@ const LoginMessage: React.FC<{
 };
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
+  const [userLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const {initialState, setInitialState} = useModel('@@initialState');
   const {styles} = useStyles();
 
   const fetchUserInfo = async () => {
-    // const userInfo = await initialState?.fetchUserInfo?.();
-    // console.log(userInfo)
-    // if (userInfo) {
+
     flushSync(() => {
       const userInfo = {
         name: 'admin',
@@ -118,7 +116,6 @@ const Login: React.FC = () => {
         currentUser: userInfo
       });
     });
-    // }
   };
 
   const handleSubmit = async (values: API.LoginParams) => {
@@ -136,16 +133,6 @@ const Login: React.FC = () => {
       const urlParams = new URL(window.location.href).searchParams;
       history.push(urlParams.get('redirect') || '/');
       return;
-      // if (msg.status === 'ok') {
-      //   const defaultLoginSuccessMessage = '登录成功！'
-      //   message.success(defaultLoginSuccessMessage);
-      //   await fetchUserInfo();
-      //   const urlParams = new URL(window.location.href).searchParams;
-      //   history.push(urlParams.get('redirect') || '/');
-      //   return;
-      // }
-      // // 如果失败去设置用户错误信息
-      // setUserLoginState(msg);
     } catch (error) {
       const defaultLoginFailureMessage = '登录失败，请重试！用户名：admin，密码：123'
       message.error(defaultLoginFailureMessage);
