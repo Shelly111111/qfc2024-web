@@ -85,3 +85,9 @@ export const decryptFile = async (filename, pageNumber,pageSize) => {
     data: formData,
   });
 }
+
+export const getFiles = async () => {
+  return request('/api/files', {
+    method: 'GET',
+  });
+}

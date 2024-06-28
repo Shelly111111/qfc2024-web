@@ -1,13 +1,15 @@
 import {PageContainer} from '@ant-design/pro-components';
 import React, {useState, useEffect} from 'react';
-import {Button, Card, Col, Divider, Input, List, Row, Skeleton, Upload} from "antd";
-import {CloudUploadOutlined, CodeOutlined, FileSearchOutlined} from "@ant-design/icons";
+import {Button, Card, Col, Divider, Input, List, message, Modal, Row, Skeleton, Typography, Upload} from "antd";
+import {CloudUploadOutlined, CodeOutlined, FileSearchOutlined, InboxOutlined} from "@ant-design/icons";
 import InfiniteScroll from 'react-infinite-scroll-component';
+import {getFiles, uploadFile} from "@/services/ant-design-pro/api";
 
 const ShellSimulation = () => {
 
   const {Dragger} = Upload;
   const {TextArea} = Input;
+  const {Paragraph} = Typography;
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [text, setText] = useState("");
@@ -16,10 +18,36 @@ const ShellSimulation = () => {
   //总条数
   const [totalSize, setTotalSize] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([])
 
   const rows = 10;
 
-  const data = []
+  const onChange = (info) => {
+    const {status, response} = info.file;
+    if (status === 'done') {
+      if (+response.code === 200) {
+        setFile(info.file.name)
+        message.success(response.message)
+      } else {
+        message.error(response.message)
+      }
+    } else if (status === 'error') {
+      message.error(response?.message || "文件上传失败，请检查文件大小（超过50MB）或联系管理员！")
+    }
+  }
+
+  const beforeUpload = (file) => {
+    if (file.type !== "text/plain" && !file.name.endsWith(".log") && !file.name.endsWith(".java")) {
+      setLoading(false);
+      message.error("只能上传文本文件、log日志文件或Java脚本文件！")
+      return false;
+    }
+    if (file.size / 1024 / 1024 > 50) {
+      setLoading(false);
+      message.error("文件大小不能超过50MB！")
+      return false;
+    }
+  }
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -33,7 +61,12 @@ const ShellSimulation = () => {
 
   //获取文件列表
   const getFileList = async () => {
-
+    const msg = await getFiles();
+    if (+msg?.code === 200) {
+      setData(msg.data)
+    } else {
+      message.error(msg?.message || "获取文件列表失败！")
+    }
   }
 
   //执行shell
@@ -43,10 +76,10 @@ const ShellSimulation = () => {
 
   //获取下一页
   const getPage = async () => {
-      if (loading) {
-        return;
-      }
-      setLoading(true);
+    if (loading) {
+      return;
+    }
+    setLoading(true);
 
   }
 
@@ -72,6 +105,24 @@ const ShellSimulation = () => {
         <br/>
         <p>请注意程序对于未来加入其他命令的可扩展性和对于大规模输入的内存开销。</p>
       </div>
+      <Modal title="上传文件" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Dragger
+          name="file"
+          multiple={false}
+          accept="text/plain,.java,.log"
+          customRequest={uploadFile}
+          onChange={onChange}
+          beforeUpload={beforeUpload}
+        >
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined/>
+          </p>
+          <p className="ant-upload-text">Click or drag file to this area to upload</p>
+          <p className="ant-upload-hint">
+            请上传文本文件，文件大小不能超过50MB
+          </p>
+        </Dragger>
+      </Modal>
       <Row>
         <Card
           style={{
@@ -87,36 +138,36 @@ const ShellSimulation = () => {
           ]}
         >
           <div
-            id="scrollableDiv"
             style={{
-              height: 230,
+              height: 300,
               overflow: 'auto',
               // padding: '0 16px',
               // border: '1px solid rgba(140, 140, 140, 0.35)',
             }}
           >
-            <InfiniteScroll
-              dataLength={data.length}
-              next={getPage}
-              hasMore={data.length < totalSize}
-              loader={
-                <Skeleton
-                  // avatar
-                  paragraph={{
-                    rows: 1,
-                  }}
-                  // active
-                />
-              }
-              endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
-              scrollableTarget="scrollableDiv"
+            <List
+              dataSource={data}
+              renderItem={(item) => <List.Item><Paragraph copyable>{item}</Paragraph></List.Item>}
             >
-              <List
-                dataSource={data}
-                renderItem={(item) => <List.Item>{item}</List.Item>}
-              >
-              </List>
-            </InfiniteScroll>
+            </List>
+            {/*<InfiniteScroll*/}
+            {/*  dataLength={data.length}*/}
+            {/*  next={getPage}*/}
+            {/*  hasMore={data.length < totalSize}*/}
+            {/*  loader={*/}
+            {/*    <Skeleton*/}
+            {/*      // avatar*/}
+            {/*      paragraph={{*/}
+            {/*        rows: 1,*/}
+            {/*      }}*/}
+            {/*      // active*/}
+            {/*    />*/}
+            {/*  }*/}
+            {/*  endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}*/}
+            {/*  scrollableTarget="scrollableDiv"*/}
+            {/*>*/}
+
+            {/*</InfiniteScroll>*/}
 
           </div>
         </Card>
@@ -134,8 +185,7 @@ const ShellSimulation = () => {
         >
           <TextArea disabled
                     value={text}
-                    rows={rows}
-                    style={{backgroundColor: "white", resize: 'none', color: 'black'}}
+                    style={{backgroundColor: "white", resize: 'none', color: 'black', height:300}}
           />
 
         </Card>
