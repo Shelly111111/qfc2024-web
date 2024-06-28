@@ -1,9 +1,8 @@
 import {PageContainer} from '@ant-design/pro-components';
-import React, {useState, useEffect} from 'react';
-import {Button, Card, Col, Divider, Input, List, message, Modal, Row, Skeleton, Typography, Upload} from "antd";
+import React, {useState} from 'react';
+import {Button, Card, Col, Input, List, message, Modal, Row, Typography, Upload} from "antd";
 import {CloudUploadOutlined, CodeOutlined, FileSearchOutlined, InboxOutlined} from "@ant-design/icons";
-import InfiniteScroll from 'react-infinite-scroll-component';
-import {getFiles, uploadFile} from "@/services/ant-design-pro/api";
+import {getFiles, shellExecute, uploadFile} from "@/services/ant-design-pro/api";
 
 const ShellSimulation = () => {
 
@@ -13,21 +12,15 @@ const ShellSimulation = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [text, setText] = useState("");
-  //当前页
-  const [currentPage, setCurrentPage] = useState(1);
-  //总条数
-  const [totalSize, setTotalSize] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [cmd, setCmd] = useState("")
   const [data, setData] = useState([])
-
-  const rows = 10;
 
   const onChange = (info) => {
     const {status, response} = info.file;
     if (status === 'done') {
       if (+response.code === 200) {
-        setFile(info.file.name)
         message.success(response.message)
+        getFileList()
       } else {
         message.error(response.message)
       }
@@ -38,12 +31,10 @@ const ShellSimulation = () => {
 
   const beforeUpload = (file) => {
     if (file.type !== "text/plain" && !file.name.endsWith(".log") && !file.name.endsWith(".java")) {
-      setLoading(false);
       message.error("只能上传文本文件、log日志文件或Java脚本文件！")
       return false;
     }
     if (file.size / 1024 / 1024 > 50) {
-      setLoading(false);
       message.error("文件大小不能超过50MB！")
       return false;
     }
@@ -71,21 +62,18 @@ const ShellSimulation = () => {
 
   //执行shell
   const shellExe = async () => {
-
-  }
-
-  //获取下一页
-  const getPage = async () => {
-    if (loading) {
+    if (cmd.trim().length === 0) {
+      message.error("请输入shell命令！")
       return;
     }
-    setLoading(true);
 
+    const msg = await shellExecute(cmd)
+    if (+msg?.code === 200) {
+      setText(msg.data.join('\n'))
+    } else {
+      message.error(msg?.message || "执行命令失败！")
+    }
   }
-
-  useEffect(() => {
-    getPage();
-  }, []);
 
 
   return (
@@ -103,7 +91,7 @@ const ShellSimulation = () => {
         <p>wc -l xx.txt</p>
         <p>cat xx.txt | grep xml | wc -l</p>
         <br/>
-        <p>请注意程序对于未来加入其他命令的可扩展性和对于大规模输入的内存开销。</p>
+        <p>请注意程序对于未来加入其他命令的可扩展性和对于大规模输入的内存开销。(注意：当数据过大，将只显示前10行)</p>
       </div>
       <Modal title="上传文件" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <Dragger
@@ -141,8 +129,7 @@ const ShellSimulation = () => {
             style={{
               height: 300,
               overflow: 'auto',
-              // padding: '0 16px',
-              // border: '1px solid rgba(140, 140, 140, 0.35)',
+
             }}
           >
             <List
@@ -150,32 +137,15 @@ const ShellSimulation = () => {
               renderItem={(item) => <List.Item><Paragraph copyable>{item}</Paragraph></List.Item>}
             >
             </List>
-            {/*<InfiniteScroll*/}
-            {/*  dataLength={data.length}*/}
-            {/*  next={getPage}*/}
-            {/*  hasMore={data.length < totalSize}*/}
-            {/*  loader={*/}
-            {/*    <Skeleton*/}
-            {/*      // avatar*/}
-            {/*      paragraph={{*/}
-            {/*        rows: 1,*/}
-            {/*      }}*/}
-            {/*      // active*/}
-            {/*    />*/}
-            {/*  }*/}
-            {/*  endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}*/}
-            {/*  scrollableTarget="scrollableDiv"*/}
-            {/*>*/}
-
-            {/*</InfiniteScroll>*/}
-
           </div>
         </Card>
         <Card
           style={{
             width: "50%",
           }}
-          title={<Input placeholder="请输入 shell 命令"/>}
+          title={<Input placeholder="请输入 shell 命令" onChange={(event) => {
+            setCmd(event.target.value)
+          }}/>}
           actions={[
             <Row key="shell" style={{width: "100%", height: "100%"}} onClick={shellExe} justify="center">
               <Col><CodeOutlined/></Col>
@@ -185,7 +155,7 @@ const ShellSimulation = () => {
         >
           <TextArea disabled
                     value={text}
-                    style={{backgroundColor: "white", resize: 'none', color: 'black', height:300}}
+                    style={{backgroundColor: "white", resize: 'none', color: 'black', height: 300}}
           />
 
         </Card>

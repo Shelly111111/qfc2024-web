@@ -91,3 +91,12 @@ export const getFiles = async () => {
     method: 'GET',
   });
 }
+
+export const shellExecute = async (cmd) => {
+  const formData = new FormData()
+  formData.append("cmd", cmd)
+  return request('/api/shell/execute', {
+    method: 'POST',
+    data: formData,
+  });
+}
