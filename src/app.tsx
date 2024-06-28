@@ -27,7 +27,7 @@ export async function getInitialState(): Promise<{
       });
       return msg.data;
     } catch (error) {
-      // history.push(loginPath);
+      history.push(loginPath);
     }
     return undefined;
   };
