@@ -54,7 +54,7 @@ const CodeLines = () => {
         message.error(response.message)
       }
     } else if (status === 'error') {
-      message.error(response?.message || "文件太大（超过50MB），无法上传！")
+      message.error(response?.message || "文件上传失败，请检查文件大小（超过50MB）或联系管理员！")
     }
   }
 
@@ -115,7 +115,7 @@ const CodeLines = () => {
           </Dragger>
         </Modal>
         <Card
-          hoverable
+          // hoverable
           style={{
             width: "100%",
           }}

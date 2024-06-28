@@ -1,6 +1,6 @@
 import {PageContainer} from '@ant-design/pro-components';
 import React, {useState} from 'react';
-import {CloudUploadOutlined, CodeOutlined, InboxOutlined} from '@ant-design/icons';
+import {CloudUploadOutlined, FormOutlined, InboxOutlined} from '@ant-design/icons';
 import {message, Upload, Card, Modal, Descriptions, Row, Col} from 'antd';
 import {analysisFile, uploadFile} from "@/services/ant-design-pro/api";
 
@@ -67,7 +67,7 @@ const LogAnalysis = () => {
         message.error(response.message)
       }
     } else if (status === 'error') {
-      message.error(response?.message || "文件太大（超过50MB），无法上传！")
+      message.error(response?.message || "文件上传失败，请检查文件大小（超过50MB）或联系管理员！")
     }
   }
 
@@ -84,7 +84,7 @@ const LogAnalysis = () => {
 
   //分析日志
   const analysis = async () => {
-    if(file === "请上传文件"){
+    if (file === "请上传文件") {
       message.error("请上传文件")
       return;
     }
@@ -133,7 +133,7 @@ const LogAnalysis = () => {
           </Dragger>
         </Modal>
         <Card
-          hoverable
+          // hoverable
           style={{
             width: "100%",
           }}
@@ -144,7 +144,7 @@ const LogAnalysis = () => {
               <Col>上传文件</Col>
             </Row>,
             <Row key="analysis" style={{width: "100%", height: "100%"}} onClick={analysis} justify="center">
-              <Col><CodeOutlined/></Col>
+              <Col><FormOutlined/></Col>
               <Col>分析日志</Col>
             </Row>,
           ]}

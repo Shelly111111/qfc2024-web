@@ -52,6 +52,12 @@ export default [
     component: './Question3/TextDecryption',
   },
   {
+    path: '/shellSimulation',
+    name: 'Shell模拟',
+    icon: 'CodeOutlined',
+    component: './Question4/ShellSimulation',
+  },
+  {
     path: '*',
     layout: false,
     component: './404',

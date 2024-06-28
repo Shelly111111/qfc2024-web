@@ -1,5 +1,5 @@
 import {PageContainer} from '@ant-design/pro-components';
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {Card, Col, Divider, Input, message, Modal, Pagination, Row, Upload, Typography} from "antd";
 import {decryptFile, uploadFile} from "@/services/ant-design-pro/api";
 import {CloudUploadOutlined, FileTextOutlined, InboxOutlined} from "@ant-design/icons";
@@ -17,8 +17,9 @@ const TextDecryption = () => {
   const [decryptText, setDecryptText] = useState("");
   //当前页
   const [currentPage, setCurrentPage] = useState(1);
-  //总页数
-  const [totalPage, setTotalPage] = useState(1);
+  //总条数
+  const [totalSize, setTotalSize] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const rows = 10;
 
@@ -32,16 +33,18 @@ const TextDecryption = () => {
         message.error(response.message)
       }
     } else if (status === 'error') {
-      message.error(response?.message || "文件太大（超过50MB），无法上传！")
+      message.error(response?.message || "文件上传失败，请检查文件大小（超过50MB）或联系管理员！")
     }
   }
 
   const beforeUpload = (file) => {
     if (file.type !== "text/plain") {
+      setLoading(false);
       message.error("只能上传文本文件！")
       return false;
     }
     if (file.size / 1024 / 1024 > 50) {
+      setLoading(false);
       message.error("文件大小不能超过50MB！")
       return false;
     }
@@ -49,9 +52,17 @@ const TextDecryption = () => {
 
   const pageChange = async (pageNumber) => {
     setCurrentPage(pageNumber)
-
-    await decrypt(pageNumber)
+    // setLoading(true);
   };
+
+  useEffect(() => {
+    if (file === "请上传文件") {
+      setLoading(false);
+      return;
+    }
+    decrypt();
+  }, [currentPage]);
+
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -63,19 +74,24 @@ const TextDecryption = () => {
     setIsModalOpen(false);
   };
 
-  const decrypt = async (pageNumber) => {
+  const decrypt = async () => {
     if (file === "请上传文件") {
+      setLoading(false);
       message.error("请上传文件")
+      return;
+    }
+    if(loading){
+      message.info("正在解码数据，请等待...")
       return;
     }
 
     //将需要解密的文件名传入后端
-    const msg = await decryptFile(file, pageNumber, rows)
+    const msg = await decryptFile(file, currentPage, rows)
     // console.log(msg)
     if (+msg.code === 200) {
       let data = msg.data
-      setCurrentPage(data.currentPage)
-      setTotalPage(data.totalSize)
+      // setCurrentPage(data.currentPage)
+      setTotalSize(data.totalSize)
       let entext = ""
       let detext = ""
       for (let d of data.data) {
@@ -84,9 +100,11 @@ const TextDecryption = () => {
       }
       setEncryptText(entext)
       setDecryptText(detext)
+      setLoading(false);
 
     } else {
       message.error(msg.message)
+      setLoading(false);
     }
   }
 
@@ -121,7 +139,7 @@ const TextDecryption = () => {
           </Dragger>
         </Modal>
         <Card
-          hoverable
+          // hoverable
           style={{
             width: "100%",
           }}
@@ -131,9 +149,7 @@ const TextDecryption = () => {
               <Col><CloudUploadOutlined/></Col>
               <Col>上传文件</Col>
             </Row>,
-            <Row key="decrypt" style={{width: "100%", height: "100%"}} onClick={async () => {
-              await decrypt(currentPage)
-            }} justify="center">
+            <Row key="decrypt" style={{width: "100%", height: "100%"}} onClick={()=>{setLoading(true);decrypt();}} justify="center">
               <Col><FileTextOutlined/></Col>
               <Col>文本解密</Col>
             </Row>,
@@ -160,7 +176,7 @@ const TextDecryption = () => {
             </Col>
           </Row>
           <br/>
-          <Pagination showQuickJumper defaultCurrent={currentPage} total={totalPage} onChange={pageChange}
+          <Pagination showQuickJumper defaultCurrent={currentPage} total={totalSize} onChange={pageChange}
                       style={{display: "flex", justifyContent: "center"}}/>
         </Card>
       </div>
