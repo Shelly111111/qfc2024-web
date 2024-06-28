@@ -103,17 +103,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       },
     ],
 
-    //左下角链接，开发模式才显示
-    links: isDev
-      ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-        ]
-      : [],
 
-    // menuHeaderRender: undefined,
 
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
