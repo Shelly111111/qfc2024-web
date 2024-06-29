@@ -1,6 +1,6 @@
-import { PageContainer } from '@ant-design/pro-components';
-import { useModel } from '@umijs/max';
-import { Card, theme } from 'antd';
+import {PageContainer} from '@ant-design/pro-components';
+import {useModel} from '@umijs/max';
+import {Card, theme, Typography} from 'antd';
 import React from 'react';
 
 /**
@@ -13,10 +13,10 @@ const InfoCard: React.FC<{
   index: number;
   desc: string;
   href: string;
-}> = ({ title, href, index, desc }) => {
-  const { useToken } = theme;
+}> = ({title, href, index, desc}) => {
+  const {useToken} = theme;
 
-  const { token } = useToken();
+  const {token} = useToken();
 
   return (
     <div
@@ -84,8 +84,9 @@ const InfoCard: React.FC<{
 };
 
 const Welcome: React.FC = () => {
-  const { token } = theme.useToken();
-  const { initialState } = useModel('@@initialState');
+  const {token} = theme.useToken();
+  const {initialState} = useModel('@@initialState');
+  const {Text} = Typography;
   return (
     <PageContainer>
       <Card
@@ -116,11 +117,10 @@ const Welcome: React.FC = () => {
               color: token.colorTextHeading,
             }}
           >
-            欢迎使用 Ant Design Pro
+            2024届去哪儿旅行后端开发自学计划
           </div>
-          <p
+          <div
             style={{
-              fontSize: '14px',
               color: token.colorTextSecondary,
               lineHeight: '22px',
               marginTop: 16,
@@ -128,9 +128,16 @@ const Welcome: React.FC = () => {
               width: '65%',
             }}
           >
-            Ant Design Pro 是一个整合了 umi，Ant Design 和 ProComponents
-            的脚手架方案。致力于在设计规范和基础组件的基础上，继续向上构建，提炼出典型模板/业务组件/配套设计资源，进一步提升企业级中后台产品设计研发过程中的『用户』和『设计者』的体验。
-          </p>
+            <Text>1、注意编码规范，参考阿里巴巴 Java 手册</Text><br/>
+            <Text>2、熟练使用 JDK 和 guava 的 collection、IO、network 等模块</Text><br/>
+            <Text>3、了解使用 SpringMVC 或 SpringBoot 框架，并尝试结合 mybatis 使用</Text><br/>
+            <Text>4、熟悉 linux 命令和 http 请求原理</Text><br/>
+            <Text>5、考虑代码可读性和扩展性</Text><br/>
+            <Text>6、思考面向接口编程</Text><br/>
+            <Text>7、尝试 guava 和 java8 语法</Text><br/>
+            <Text>8、了解 Java 网络编程</Text>
+
+          </div>
           <div
             style={{
               display: 'flex',
@@ -140,21 +147,21 @@ const Welcome: React.FC = () => {
           >
             <InfoCard
               index={1}
-              href="https://umijs.org/docs/introduce/introduce"
-              title="了解 umi"
-              desc="umi 是一个可扩展的企业级前端应用框架,umi 以路由为基础的，同时支持配置式路由和约定式路由，保证路由的功能完备，并以此进行功能扩展。"
+              href="https://github.com/Shelly111111/QFC2024"
+              title="QFC2024"
+              desc="该程序为作业版本，使用SpringBoot实现“后端开发自学计划”的五个要求。"
             />
             <InfoCard
               index={2}
-              title="了解 ant design"
-              href="https://ant.design"
-              desc="antd 是基于 Ant Design 设计体系的 React UI 组件库，主要用于研发企业级中后台产品。"
+              title="QFC2024-web"
+              href="https://github.com/Shelly111111/qfc2024-web"
+              desc="基于react和ant design开发的web前端展示样例。主要提供：登录/注销、日志分析、代码行数统计、文本解密以及Shell模拟的功能。"
             />
             <InfoCard
               index={3}
-              title="了解 Pro Components"
-              href="https://procomponents.ant.design"
-              desc="ProComponents 是一个基于 Ant Design 做了更高抽象的模板组件，以 一个组件就是一个页面为开发理念，为中后台开发带来更好的体验。"
+              title="QFC2024-backend"
+              href="https://github.com/Shelly111111/QFC2024-backend"
+              desc="采用DDD架构设计的后端服务，以对应前端展示的功能需求。"
             />
           </div>
         </div>
