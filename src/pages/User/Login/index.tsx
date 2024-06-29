@@ -11,7 +11,7 @@ import {
   ProFormCheckbox,
   ProFormText,
 } from '@ant-design/pro-components';
-import {FormattedMessage, history, SelectLang, useModel, Helmet} from '@umijs/max';
+import {history, useModel, Helmet} from '@umijs/max';
 import {Alert, message, Tabs} from 'antd';
 import Settings from '../../../../config/defaultSettings';
 import React, {useState} from 'react';
@@ -31,17 +31,6 @@ const useStyles = createStyles(({token}) => {
         color: token.colorPrimaryActive,
       },
     },
-    lang: {
-      width: 42,
-      height: 42,
-      lineHeight: '42px',
-      position: 'fixed',
-      right: 16,
-      borderRadius: token.borderRadius,
-      ':hover': {
-        backgroundColor: token.colorBgTextHover,
-      },
-    },
     container: {
       display: 'flex',
       flexDirection: 'column',
@@ -53,16 +42,6 @@ const useStyles = createStyles(({token}) => {
     },
   };
 });
-
-const Lang = () => {
-  const {styles} = useStyles();
-
-  return (
-    <div className={styles.lang} data-lang>
-      {SelectLang && <SelectLang/>}
-    </div>
-  );
-};
 
 const LoginMessage: React.FC<{
   content: string;
@@ -148,7 +127,6 @@ const Login: React.FC = () => {
           - {Settings.title}
         </title>
       </Helmet>
-      <Lang/>
       <div
         style={{
           flex: '1',
@@ -203,12 +181,7 @@ const Login: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.username.required"
-                        defaultMessage="请输入用户名!"
-                      />
-                    ),
+                    message: ("请输入用户名!"),
                   },
                 ]}
               />
@@ -222,12 +195,7 @@ const Login: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.password.required"
-                        defaultMessage="请输入密码！"
-                      />
-                    ),
+                    message: ("请输入密码！"),
                   },
                 ]}
               />
@@ -247,21 +215,11 @@ const Login: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.phoneNumber.required"
-                        defaultMessage="请输入手机号！"
-                      />
-                    ),
+                    message: ("请输入手机号！"),
                   },
                   {
                     pattern: /^1\d{10}$/,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.phoneNumber.invalid"
-                        defaultMessage="手机号格式错误！"
-                      />
-                    ),
+                    message: ("手机号格式错误！"),
                   },
                 ]}
               />
@@ -284,16 +242,10 @@ const Login: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.captcha.required"
-                        defaultMessage="请输入验证码！"
-                      />
-                    ),
+                    message: ("请输入验证码！"),
                   },
                 ]}
                 onGetCaptcha={async (phone) => {
-                  console.log(phone)
                   message.success('获取验证码成功！验证码为：1234');
                 }}
               />
@@ -305,14 +257,14 @@ const Login: React.FC = () => {
             }}
           >
             <ProFormCheckbox noStyle name="autoLogin">
-              <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录"/>
+              自动登录
             </ProFormCheckbox>
             <a
               style={{
                 float: 'right',
               }}
             >
-              <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码"/>
+              忘记密码
             </a>
           </div>
         </LoginForm>
