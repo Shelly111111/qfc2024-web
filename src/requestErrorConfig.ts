@@ -92,7 +92,7 @@ export const errorConfig: RequestConfig = {
     (config: RequestOptions) => {
       const url = config?.url
       const token = localStorage.getItem('access_token') || ''
-      if(token && url !== 'http://localhost:8081/oauth/token'){
+      if(token && !url.endsWith(':8081/oauth/token')){
         config.headers['Authorization'] = `Bearer ${token}`
       }
       //这里一定要传url，不然会出现跨域问题
