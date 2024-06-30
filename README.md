@@ -56,3 +56,7 @@ npm start
    该程序为作业版本，使用SpringBoot实现“后端开发自学计划”的五个要求。
 2. [QFC2024-backend](https://github.com/Shelly111111/QFC2024-backend) <br>
    采用DDD架构设计的后端服务，以对应前端展示的功能需求。
+
+## 在线demo
+
+http://49.232.6.238:8000/
